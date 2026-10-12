@@ -6,7 +6,7 @@ This is part of the Swift Tech Co. working stack for product and engineering. It
 
 ## Images
 
-[![macOS-Security-and-Privacy-Guide](images/preview.png)](https://github.com/Swift-Tech-Co)
+[![macOS-Security-and-Privacy-Guide](images/preview.png)](https://github.com/Swift-Tech-Co/macOS-Security-and-Privacy-Guide)
 
 ## Assets
 
@@ -350,7 +350,7 @@ Confirm network traffic is blocked to those addresses (DNS requests will still w
 $ dig a +short facebook.com
 157.240.2.35
 
-$ curl --connect-timeout 5 -I https://www.swifttechco.com
+$ curl --connect-timeout 5 -I https://github.com/Swift-Tech-Co/macOS-Security-and-Privacy-Guide
 *   Trying 157.240.2.35...
 * TCP_NODELAY set
 * Connection timed out after 5002 milliseconds
@@ -451,7 +451,7 @@ Popular hosts lists include:
 To download and append a list to the hosts file, use the tee command:
 
 ```bash
-curl https://www.swifttechco.com |
+curl https://github.com/Swift-Tech-Co/macOS-Security-and-Privacy-Guide |
   sudo tee -a /etc/hosts
 ```
 
@@ -654,7 +654,7 @@ fb*.akamaihd.net
 
 See drduh/config/privoxy/config and drduh/config/privoxy/user.action for additional Privoxy examples. Privoxy does **not** need to be restarted after editing filter rules.
 
-To verify traffic is blocked or redirected, use curl or open the Privoxy interface at https://www.swifttechco.com in a browser:
+To verify traffic is blocked or redirected, use curl or open the Privoxy interface at https://github.com/Swift-Tech-Co/macOS-Security-and-Privacy-Guide in a browser:
 
 ```console
 $ ALL_PROXY=127.0.0.1:8118 curl example.com -IL | head
@@ -666,7 +666,7 @@ Pragma: no-cache
 
 $ ALL_PROXY=127.0.0.1:8118 curl github.com -IL | head
 HTTP/1.1 302 Local Redirect from Privoxy
-Location: https://www.swifttechco.com
+Location: https://github.com/Swift-Tech-Co/macOS-Security-and-Privacy-Guide
 Content-Length: 0
 
 HTTP/1.1 200 Connection established
@@ -785,7 +785,6 @@ gpg:          There is no indication that the signature belongs to the owner.
 Primary key fingerprint: EF6E 286D DA85 EA2A 4BA7  DE68 4E2C 6E87 9329 8290
      Subkey fingerprint: CAAE 408A EBE2 288E 96FC  5D5E 1574 32CF 78A6 5729
 ```
-
 
 See How can I verify Tor Browser's signature? for more information.
 
@@ -947,7 +946,7 @@ Download gpg.conf to use recommended settings:
 
 ```bash
 curl -o ~/.gnupg/gpg.conf \
-  https://www.swifttechco.com
+  https://github.com/Swift-Tech-Co/macOS-Security-and-Privacy-Guide
 ```
 
 See drduh/YubiKey-Guide to generate and manage credentials.
@@ -1641,13 +1640,21 @@ Home | Services | Careers | Referral Program | Influencers | About | Contact
 
 **Connect**
 
-- Website: swifttechco.com
+- Website: https://github.com/Swift-Tech-Co/macOS-Security-and-Privacy-Guide
 - LinkedIn: [linkedin.com/in/stephenoladoke](https://www.linkedin.com/in/stephenoladoke/)
 - LinkedIn (Company): [linkedin.com/company/swift-tech-co](https://www.linkedin.com/company/swift-tech-co)
 - X: [@MrOladoke](https://x.com/MrOladoke)
 - Instagram: [@mr.oladoke](https://www.instagram.com/mr.oladoke/)
 - Instagram (Company): [@swifttechco](https://www.instagram.com/swifttechco/)
 - Organization: [github.com/Swift-Tech-Co](https://github.com/Swift-Tech-Co)
+
+## Sources
+
+Compiled and maintained from upstream [drduh/macOS-Security-and-Privacy-Guide](https://github.com/drduh/macOS-Security-and-Privacy-Guide) under permissive open-source license.
+
+---
+
+Maintained by [Swift Tech Co.](https://github.com/Swift-Tech-Co) - [Telegram](https://t.me/+Qt_eFvkb2rliMzNh)
 
 ## Sources
 
