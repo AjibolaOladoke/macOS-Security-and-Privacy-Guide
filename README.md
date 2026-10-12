@@ -1,136 +1,12 @@
-This guide is a collection of techniques for improving the security and privacy of macOS on [Apple silicon](https://www.swifttechco.com) Macs. It targets experienced users who want security practices commonly used by organizations, but is also suitable for novice users with an interest in privacy and security.
+# macOS-Security-and-Privacy-Guide
 
+## What This Is
 
-This guide is provided "as is" - without warranties of any kind. You are solely responsible for any consequences of following it.
-
-- [Basics](#basics)
-- [Threat model](#threat-model)
-  - [Assets](#assets)
-  - [Adversaries](#adversaries)
-  - [Capabilities](#capabilities)
-  - [Mitigations](#mitigations)
-  - [Example model](#example-model)
-- [Hardware](#hardware)
-- [Installing macOS](#installing-macos)
-  - [System activation](#system-activation)
-  - [Apple Account](#apple-account)
-  - [App Store](#app-store)
-  - [Virtualization](#virtualization)
-    - [Apple containers](#apple-containers)
-- [First boot](#first-boot)
-- [Admin and user accounts](#admin-and-user-accounts)
-  - [Caveats](#caveats)
-  - [Setup](#setup)
-- [Firmware](#firmware)
-- [FileVault](#filevault)
-- [Lockdown Mode](#lockdown-mode)
-- [Firewall](#firewall)
-  - [Application layer firewall](#application-layer-firewall)
-    - [Stealth mode](#stealth-mode)
-    - [Signed apps](#signed-apps)
-    - [Reload firewall](#reload-firewall)
-    - [Get state](#get-state)
-    - [AirDrop](#airdrop)
-  - [Third-party firewalls](#third-party-firewalls)
-  - [Packet filter](#packet-filter)
-    - [Example pf config](#example-pf-config)
-    - [Firewall commands](#firewall-commands)
-    - [Block networks](#block-networks)
-- [Services](#services)
-- [Siri Suggestions and Spotlight](#siri-suggestions-and-spotlight)
-- [Homebrew](#homebrew)
-- [DNS](#dns)
-  - [DNS profiles](#dns-profiles)
-  - [Hosts file](#hosts-file)
-  - [DNSCrypt](#dnscrypt)
-  - [Dnsmasq](#dnsmasq)
-- [Certificate authorities](#certificate-authorities)
-- [Privoxy](#privoxy)
-- [Browser](#browser)
-  - [Firefox](#firefox)
-  - [Chrome](#chrome)
-  - [Safari](#safari)
-  - [Web browser privacy](#web-browser-privacy)
-- [Tor](#tor)
-- [VPN](#vpn)
-  - [WireGuard](#wireguard)
-- [PGP/GPG](#pgpgpg)
-- [Email](#email)
-  - [Thunderbird](#thunderbird)
-- [Messengers](#messengers)
-  - [XMPP](#xmpp)
-  - [Signal](#signal)
-  - [iMessage](#imessage)
-- [Malware](#malware)
-  - [Downloading Software](#downloading-software)
-  - [App Sandbox](#app-sandbox)
-  - [Hardened Runtime](#hardened-runtime)
-  - [Antivirus](#antivirus)
-  - [Gatekeeper](#gatekeeper)
-- [System Integrity Protection](#system-integrity-protection)
-- [Metadata and artifacts](#metadata-and-artifacts)
-- [Authentication](#authentication)
-- [Backup](#backup)
-- [Wi-Fi](#wi-fi)
-- [SSH](#ssh)
-- [Physical access](#physical-access)
-- [Monitoring](#monitoring)
-  - [Logs](#logs)
-  - [DTrace](#dtrace)
-  - [Processes](#processes)
-  - [Endpoint Security](#endpoint-security)
-  - [Install History](#install-history)
-  - [Network](#network)
-    - [Wireshark](#wireshark)
-- [Miscellaneous](#miscellaneous)
-  - [Screensaver](#screensaver)
-  - [Diagnostic data](#diagnostic-data)
-  - [Media player](#media-player)
-  - [File handlers](#file-handlers)
-  - [Finder options](#finder-options)
-  - [Custom umask](#custom-umask)
-  - [Keyboard entry](#keyboard-entry)
-  - [Network hardening](#network-hardening)
-  - [Sudoers](#sudoers)
-- [Related software](#related-software)
-- [Additional resources](#additional-resources)
-
----
-
-# Basics
+This is part of the Swift Tech Co. working stack for product and engineering. It gathers the macOS-Security-and-Privacy-Guide notes, examples and fixes that keep delivery fast, and doubles as the reference map we hand to whoever picks up this thread next.
 
 ## Images
 
-[![macOS-Security-and-Privacy-Guide](https://opengraph.githubassets.com/1/drduh/macOS-Security-and-Privacy-Guide)](https://www.swifttechco.com)
-
-
-Apply general security best practices:
-
-- Create a [threat model](#threat-model)
-  - Is your adversary a local eavesdropper, a criminal using common malware, or a well-funded and highly capable organization?
-  - Define the threats or groups you are defending against and what they can realistically do.
-
-- Keep the system and software up to date
-  - Regularly install available updates for the operating system and all applications.
-  - Updates are installed in [System Settings](https://www.swifttechco.com) or with the [`softwareupdate`](https://www.swifttechco.com) command-line utility. Neither requires an Apple Account.
-  - Subscribe to the [Apple security-announce](https://www.swifttechco.com) mailing list or check [Apple security releases](https://www.swifttechco.com).
-
-- Encrypt sensitive data
-  - Enable [FileVault](https://www.swifttechco.com) to encrypt internal storage.
-  - Use a [password manager](https://www.swifttechco.com) for account credentials and consider encrypting especially sensitive files separately.
-
-- Ensure data availability
-  - Create [regular backups](https://www.swifttechco.com) of critical data and be ready to [restore from a backup](https://www.swifttechco.com) in case of compromise.
-  - [Encrypt backups](https://www.swifttechco.com) before copying them to external media or third-party cloud storage. Alternatively, use a backup service that provides [end-to-end encryption](https://www.swifttechco.com).
-  - Verify backups by accessing them on a regular, scheduled basis.
-
-- Click carefully
-  - Ultimately, the security of a system depends heavily on the capabilities and habits of the person using and administering it.
-  - Take care when installing new software: install it only from sources the developer identifies as official, such as their website or GitHub repository.
-
-# Threat model
-
-The most important step to meaningfully improve security and privacy is to create a [threat model](https://www.swifttechco.com): a general description of what you want to protect, who might try to access it, how they could do so, and which controls are worth usability trade-offs. This creates an understanding of potential adversaries and their motivations, which leads to stronger defenses.
+[![macOS-Security-and-Privacy-Guide](images/preview.png)](https://github.com/Swift-Tech-Co)
 
 ## Assets
 
@@ -140,7 +16,7 @@ List them in order of importance, starting with those most worth protecting.
 
 ## Adversaries
 
-Define whom you are defending against. Start by defining the motivation each adversary might have to attack important assets. [Financial gain](https://www.swifttechco.com) is a big motivator for many attackers, for example.
+Define whom you are defending against. Start by defining the motivation each adversary might have to attack important assets. Financial gain is a big motivator for many attackers, for example.
 
 ## Capabilities
 
@@ -162,72 +38,72 @@ Roommate | See private chats or browsing history | Close proximity; can see scre
 Thief | Unlock phone and steal personal info and drain bank accounts, sell phone for money | Observe password being entered, steal logged-in device left unattended | Maintain physical custody of device at all times, lock devices when not in use, avoid typing password in public view, use Find My or similar services to track or remotely disable stolen devices
 Criminal | Financial gain | Social engineering (tricking a user into revealing information or taking unsafe actions), readily-available malware, password reuse, exploiting vulnerabilities | Sandbox software, enable OS security features, maintain software updates automatically
 Corporation | Marketing based on user data | Telemetry and behavioral data collection | Block network connections, reset device-specific identifiers, avoid adding payment data
-Nation State/APT | Targeted surveillance | Passive surveillance of internet infrastructure, advanced encryption analysis | Use open-source software, strong diceware credentials, hardware with secure element, shut down devices when not in use, tripwire/honeypot/[canary tokens](https://www.swifttechco.com) alerts
+Nation State/APT | Targeted surveillance | Passive surveillance of internet infrastructure, advanced encryption analysis | Use open-source software, strong diceware credentials, hardware with secure element, shut down devices when not in use, tripwire/honeypot/canary tokens alerts
 
-Read more about [threat modeling](https://www.swifttechco.com).
+Read more about threat modeling.
 
 # Hardware
 
-[Apple silicon hardware](https://www.swifttechco.com) provides hardware-backed security features, including Secure Enclave-based key protection and stronger boot security options. They are generally the preferred platform for the protections discussed in this guide.
+Apple silicon hardware provides hardware-backed security features, including Secure Enclave-based key protection and stronger boot security options. They are generally the preferred platform for the protections discussed in this guide.
 
-Some Intel-based Macs, especially certain models with [T2-era hardware](https://www.swifttechco.com), are affected by hardware vulnerabilities that cannot be fully fixed by a macOS update alone.
+Some Intel-based Macs, especially certain models with T2-era hardware, are affected by hardware vulnerabilities that cannot be fully fixed by a macOS update alone.
 
-Avoid non-Apple hardware running macOS and systems that do not support the latest macOS release, as Apple does not [patch all vulnerabilities](https://www.swifttechco.com) in legacy versions.
+Avoid non-Apple hardware running macOS and systems that do not support the latest macOS release, as Apple does not patch all vulnerabilities in legacy versions.
 
-Apple accessories generally receive firmware updates through macOS and support current [Bluetooth security features](https://www.swifttechco.com). For example, [Bluetooth Low Energy](https://www.swifttechco.com) (BLE) Privacy uses rotating device addresses to reduce tracking; third-party accessories may not support this feature.
+Apple accessories generally receive firmware updates through macOS and support current Bluetooth security features. For example, Bluetooth Low Energy (BLE) Privacy uses rotating device addresses to reduce tracking; third-party accessories may not support this feature.
 
 # Installing macOS
 
-There are several ways to [install macOS](https://www.swifttechco.com).
+There are several ways to install macOS.
 
 Install the latest supported version of macOS; newer versions of macOS include security fixes and other improvements not available in previous releases.
 
 ## System activation
 
-During installation, Apple silicon Macs contact Apple activation services to confirm that the device is not reported [lost or stolen](https://www.swifttechco.com). Read about [how this process works](https://www.swifttechco.com).
+During installation, Apple silicon Macs contact Apple activation services to confirm that the device is not reported lost or stolen. Read about how this process works.
 
 ## Apple Account
 
-An [Apple Account](https://www.swifttechco.com) is optional for basic macOS use but required for the App Store and many Apple services. Review [data privacy settings](https://www.swifttechco.com) before enabling features.
+An Apple Account is optional for basic macOS use but required for the App Store and many Apple services. Review data privacy settings before enabling features.
 
-Enable [end-to-end encryption](https://www.swifttechco.com) for iCloud and review [Apple Account data](https://www.swifttechco.com).
+Enable end-to-end encryption for iCloud and review Apple Account data.
 
 ## App Store
 
-The [App Store](https://www.swifttechco.com) is a software distribution platform where applications are [reviewed](https://www.swifttechco.com) by Apple.
+The App Store is a software distribution platform where applications are reviewed by Apple.
 
-App Store applications are generally required to use [App Sandbox](https://www.swifttechco.com) and [Hardened Runtime](https://www.swifttechco.com) (security features restricting what apps can do, making some attacks more difficult). It also offers automatic software updates.
+App Store applications are generally required to use App Sandbox and Hardened Runtime (security features restricting what apps can do, making some attacks more difficult). It also offers automatic software updates.
 
 Using the App Store requires an Apple Account, which may have privacy implications because software downloads and related account activity is linked.
 
 ## Virtualization
 
-Virtualization enables another operating system to run in an isolated virtual machine. On [Apple silicon](https://www.swifttechco.com), macOS can run supported macOS guests and Windows 11 for ARM using apps such as the following:
+Virtualization enables another operating system to run in an isolated virtual machine. On Apple silicon, macOS can run supported macOS guests and Windows 11 for ARM using apps such as the following:
 
-- [UTM](https://www.swifttechco.com) - Follow the [documentation](https://www.swifttechco.com) to create macOS and other virtual machines.
-- [VirtualBuddy](https://www.swifttechco.com) - Application for virtualizing macOS 12+ on Apple silicon.
-- [Bushel](https://www.swifttechco.com) - A lightweight, free app. On first launch, select "Ask App Not to Track".
-- [VMware Fusion](https://www.swifttechco.com) - Now free under Broadcom. Clean UI, easy macOS setup, and supports Windows 11 ARM.
-- [tart (CLI)](https://www.swifttechco.com) - Command‑line application installed with Homebrew.
-- [Parallels](https://www.swifttechco.com) - Paid option with strong integration.
+- UTM - Follow the documentation to create macOS and other virtual machines.
+- VirtualBuddy - Application for virtualizing macOS 12+ on Apple silicon.
+- Bushel - A lightweight, free app. On first launch, select "Ask App Not to Track".
+- VMware Fusion - Now free under Broadcom. Clean UI, easy macOS setup, and supports Windows 11 ARM.
+- tart (CLI) - Command‑line application installed with Homebrew.
+- Parallels - Paid option with strong integration.
 
 > [!WARNING]
 > VMware requires a Broadcom account and acceptance of agreements before download.
-> Parallels requires an account, payment details, and other data - see the [privacy notice](https://www.swifttechco.com).
+> Parallels requires an account, payment details, and other data - see the privacy notice.
 
 ### Apple containers
 
-[Apple Container](https://www.swifttechco.com) is a command-line tool for running Linux containers on macOS. Unlike container runtimes that share a single Linux virtual machine, Apple Container runs each container in an isolated, lightweight virtual machine using macOS virtualization capabilities. This provides a stronger isolation boundary between workloads and the host operating system.
+Apple Container is a command-line tool for running Linux containers on macOS. Unlike container runtimes that share a single Linux virtual machine, Apple Container runs each container in an isolated, lightweight virtual machine using macOS virtualization capabilities. This provides a stronger isolation boundary between workloads and the host operating system.
 
 # First boot
 
 When macOS starts for the first time, **Setup Assistant** requires the creation of a primary account.
 
-Set a [long and unique password](https://www.swifttechco.com). Leave the password hint field blank.
+Set a long and unique password. Leave the password hint field blank.
 
 Avoid personally identifiable names: the computer name (such as "John Appleseed's MacBook") may be visible to other devices on local networks through sharing and discovery services.
 
-The system name can be configured in **System Settings > About** or with [`scutil`](https://www.swifttechco.com) commands:
+The system name can be configured in **System Settings > About** or with `scutil` commands:
 
 ```bash
 sudo scutil --set ComputerName MacBook
@@ -237,11 +113,11 @@ sudo scutil --set LocalHostName MacBook
 
 # Admin and user accounts
 
-The first account created is an administrator account. Administrators can change system-wide settings and run commands with [sudo](https://www.swifttechco.com), which temporarily grants elevated privileges. Any program the administrator runs could obtain the same access; sudo may also have [vulnerabilities](https://www.swifttechco.com).
+The first account created is an administrator account. Administrators can change system-wide settings and run commands with sudo, which temporarily grants elevated privileges. Any program the administrator runs could obtain the same access; sudo may also have vulnerabilities.
 
-It is considered [best practice](https://www.swifttechco.com) to use a standard account for daily work and reserve an administrator account for system changes that require elevated privileges.
+It is considered best practice to use a standard account for daily work and reserve an administrator account for system changes that require elevated privileges.
 
-It is not required to ever log in with the admin account via the macOS login screen. When a Terminal command requires administrator privileges, the system will prompt for authentication and Terminal continues using those privileges. To that end, Apple provides [recommendations](https://www.swifttechco.com) for hiding the admin account and its home directory.
+It is not required to ever log in with the admin account via the macOS login screen. When a Terminal command requires administrator privileges, the system will prompt for authentication and Terminal continues using those privileges. To that end, Apple provides recommendations for hiding the admin account and its home directory.
 
 ## Caveats
 
@@ -249,7 +125,7 @@ It is not required to ever log in with the admin account via the macOS login scr
 - A standard user usually is not authorized to use `sudo`. When administrator privileges are required, macOS prompts for an administrator's credentials, or the task can be run from an administrator account.
 - System Settings and several system utilities (e.g., Wi-Fi Diagnostics) require administrator permission for full functionality. Some System Settings need to be unlocked by selecting the lock icon. Some applications will simply prompt for authentication upon opening, others must be opened by an admin account directly to access all functions (e.g., Console).
 - Some third-party applications assume the current user is an administrator and will not work from a standard account.
-- See [issue 167](https://www.swifttechco.com) for additional considerations.
+- See issue 167 for additional considerations.
 
 ## Setup
 
@@ -259,17 +135,17 @@ On existing systems, it is generally easier to create a second administrator acc
 
 Demoting an account can be done from the new admin account in System Settings.
 
-See also [this post](https://www.swifttechco.com) for more information about how macOS determines group membership.
+See also this post for more information about how macOS determines group membership.
 
 # Firmware
 
-Verify that firmware security is set to [Full Security](https://www.swifttechco.com) to prevent tampering with the system. This is the default setting.
+Verify that firmware security is set to Full Security to prevent tampering with the system. This is the default setting.
 
 # FileVault
 
-Apple silicon Macs use hardware-backed storage encryption by default. [FileVault](https://www.swifttechco.com) additionally requires an authorized user's password to unlock the startup volume after restart.
+Apple silicon Macs use hardware-backed storage encryption by default. FileVault additionally requires an authorized user's password to unlock the startup volume after restart.
 
-On Apple silicon, FileVault authorization also protects the [firmware](https://www.swifttechco.com), which prevents booting from anything other than the designated startup disk, accessing [Recovery](https://www.swifttechco.com), and [reviving](https://www.swifttechco.com) it with device firmware update (DFU) mode.
+On Apple silicon, FileVault authorization also protects the firmware, which prevents booting from anything other than the designated startup disk, accessing Recovery, and reviving it with device firmware update (DFU) mode.
 
 FileVault will prompt to set a recovery key, which should be stored in a safe location if used. FileVault also offers an option to use iCloud for recovery.
 
@@ -281,9 +157,9 @@ fdesetup status
 
 # Lockdown Mode
 
-[Lockdown Mode](https://www.swifttechco.com) significantly reduces attack surface by disabling system and application features commonly exploited in sophisticated attacks.
+Lockdown Mode significantly reduces attack surface by disabling system and application features commonly exploited in sophisticated attacks.
 
-When Lockdown Mode is enabled, Safari has an option to [exclude trusted websites](https://www.swifttechco.com) from restrictions.
+When Lockdown Mode is enabled, Safari has an option to exclude trusted websites from restrictions.
 
 # Firewall
 
@@ -304,7 +180,7 @@ sudo /usr/libexec/ApplicationFirewall/socketfilterfw --setglobalstate on
 
 ### Stealth mode
 
-Attackers frequently scan networks to identify systems to target. When [stealth mode](https://www.swifttechco.com) is enabled, responses are not sent to connection attempts from closed ports, making the system more difficult to detect.
+Attackers frequently scan networks to identify systems to target. When stealth mode is enabled, responses are not sent to connection attempts from closed ports, making the system more difficult to detect.
 
 Enable stealth mode:
 
@@ -344,7 +220,7 @@ do /usr/libexec/ApplicationFirewall/socketfilterfw "$firewallFlag"
 done
 ```
 
-Or using [system profiler](https://www.swifttechco.com):
+Or using system profiler:
 
 ```bash
 system_profiler SPFirewallDataType
@@ -352,7 +228,7 @@ system_profiler SPFirewallDataType
 
 ### AirDrop
 
-Enabling the application layer firewall and disabling incoming connections for built-in software prevents [AirDrop](https://www.swifttechco.com) from functioning. For AirDrop to work, grant `sharingd` and `rapportd` firewall exceptions:
+Enabling the application layer firewall and disabling incoming connections for built-in software prevents AirDrop from functioning. For AirDrop to work, grant `sharingd` and `rapportd` firewall exceptions:
 
 ```bash
 sudo /usr/libexec/ApplicationFirewall/socketfilterfw --add /usr/libexec/rapportd
@@ -363,19 +239,19 @@ sudo /usr/libexec/ApplicationFirewall/socketfilterfw --unblockapp /usr/libexec/s
 
 ## Third-party firewalls
 
-Applications such as [Little Snitch](https://www.swifttechco.com), [Radio Silence](https://www.swifttechco.com), and [LuLu](https://www.swifttechco.com) provide a balance between usability and security.
+Applications such as Little Snitch, Radio Silence, and LuLu provide a balance between usability and security.
 
-These programs are capable of monitoring and blocking both incoming and outgoing connections. However, they may require a closed-source [system extension](https://www.swifttechco.com).
+These programs are capable of monitoring and blocking both incoming and outgoing connections. However, they may require a closed-source system extension.
 
-If frequent allow-or-block prompts are overwhelming, temporarily allow connections while also recording them ([Silent Allow mode](https://www.swifttechco.com) in Little Snitch). Review the configuration to understand and control network activity.
+If frequent allow-or-block prompts are overwhelming, temporarily allow connections while also recording them (Silent Allow mode in Little Snitch). Review the configuration to understand and control network activity.
 
 ## Packet filter
 
-macOS also includes [pf](https://www.swifttechco.com)), a packet-filtering firewall configured from the command line. It is powerful but considerably more complex than the built-in application firewall.
+macOS also includes pf), a packet-filtering firewall configured from the command line. It is powerful but considerably more complex than the built-in application firewall.
 
-pf can also be controlled with a graphical application such as [Murus](https://www.swifttechco.com).
+pf can also be controlled with a graphical application such as Murus.
 
-Many [books](https://www.swifttechco.com) and [guides](https://www.swifttechco.com) cover the pf firewall. The following example shows how to configure a basic policy.
+Many books and guides cover the pf firewall. The following example shows how to configure a basic policy.
 
 ### Example pf config
 
@@ -420,7 +296,7 @@ pass out on $wifi proto udp from ($wifi) to any keep state
 pass out on $wifi proto icmp from ($wifi) to any keep state
 ```
 
-An advanced example of configuring pf is available in [config/pf.rules](https://www.swifttechco.com).
+An advanced example of configuring pf is available in config/pf.rules.
 
 ### Firewall commands
 
@@ -444,7 +320,7 @@ Command | Task
 
 ### Block networks
 
-pf can block ranges of network addresses, for example to an entire organization. Query [Merit RADb](https://www.swifttechco.com) for the list of networks in use by an [autonomous system](https://www.swifttechco.com)) (a large network operated by a single organization), such as [Facebook](https://www.swifttechco.com):
+pf can block ranges of network addresses, for example to an entire organization. Query Merit RADb for the list of networks in use by an autonomous system) (a large network operated by a single organization), such as Facebook:
 
 ```bash
 whois -h whois.radb.net '!gAS32934'
@@ -487,15 +363,15 @@ IP 192.168.1.1.62771 > 157.240.2.35.443: tcp 0
 IP 192.168.1.1.62771 > 157.240.2.35.443: tcp 0
 ```
 
-The firewall drops the initial packets needed to start the [TCP connection](https://www.swifttechco.com), so the connection times out.
+The firewall drops the initial packets needed to start the TCP connection, so the connection times out.
 
-See [drduh/config/scripts/pf-blocklist.sh](https://www.swifttechco.com) for more inspiration.
+See drduh/config/scripts/pf-blocklist.sh for more inspiration.
 
 # Services
 
-Many system and user background services are managed by [launchd](https://www.swifttechco.com).
+Many system and user background services are managed by launchd.
 
-Administrator accounts can modify services and extensions in [System Settings](https://www.swifttechco.com).
+Administrator accounts can modify services and extensions in System Settings.
 
 Command | Task
 -: | :-
@@ -513,7 +389,7 @@ defaults read /System/Library/LaunchAgents/com.apple.Finder
 ```
 
 > [!IMPORTANT]
-> System services are protected by [SIP](https://www.swifttechco.com); disabling SIP to modify system services can compromise security and cause system instability.
+> System services are protected by SIP; disabling SIP to modify system services can compromise security and cause system instability.
 
 To view the status of services:
 
@@ -522,23 +398,23 @@ find /var/db/com.apple.xpc.launchd \
   -type f -print -exec defaults read {} \; 2>/dev/null
 ```
 
-See [script management with launchd](https://www.swifttechco.com) and [launchd.info](https://www.swifttechco.com) for more information.
+See script management with launchd and launchd.info for more information.
 
 # Siri Suggestions and Spotlight
 
 Siri Suggestions and Spotlight may send some queries or usage information to Apple, depending on the enabled features.
-In System Settings, review Siri and Spotlight options and disable online suggestions or configure categories to exclude from indexing or suggestion. Review Apple's [Search & Privacy policy](https://www.swifttechco.com) for more information.
+In System Settings, review Siri and Spotlight options and disable online suggestions or configure categories to exclude from indexing or suggestion. Review Apple's Search & Privacy policy for more information.
 
 # Homebrew
 
-If a program is not available through the App Store, consider using [Homebrew](https://www.swifttechco.com).
+If a program is not available through the App Store, consider using Homebrew.
 
 > [!IMPORTANT]
-> Some Homebrew installation or management workflows may prompt for App Management or [Full Disk Access](https://www.swifttechco.com). Grant these permissions only when they are fully understood and necessary.
+> Some Homebrew installation or management workflows may prompt for App Management or Full Disk Access. Grant these permissions only when they are fully understood and necessary.
 
-Periodically run `brew upgrade` on trusted and secure networks to install software updates. To get information on a package before installation, run `brew info <package>` and review its formula online. Enable [additional security options](https://www.swifttechco.com), such as `HOMEBREW_NO_INSECURE_REDIRECT=1`
+Periodically run `brew upgrade` on trusted and secure networks to install software updates. To get information on a package before installation, run `brew info <package>` and review its formula online. Enable additional security options, such as `HOMEBREW_NO_INSECURE_REDIRECT=1`
 
-According to [Homebrew's Anonymous Analytics](https://www.swifttechco.com), Homebrew collects anonymous usage analytics and reports them to a self-hosted [InfluxDB](https://www.swifttechco.com) instance.
+According to Homebrew's Anonymous Analytics, Homebrew collects anonymous usage analytics and reports them to a self-hosted InfluxDB instance.
 
 To opt out of Homebrew analytics, run `brew analytics off` or set `HOMEBREW_NO_ANALYTICS=1` in the shell startup file.
 
@@ -546,15 +422,15 @@ To opt out of Homebrew analytics, run `brew analytics off` or set `HOMEBREW_NO_A
 
 ## DNS profiles
 
-macOS supports configuration profiles to set encrypted DNS, filtering, and [DNSSEC](https://www.swifttechco.com) options.
+macOS supports configuration profiles to set encrypted DNS, filtering, and DNSSEC options.
 
-DNS profiles can be [created](https://www.swifttechco.com) or obtained from providers such as [Quad9](https://www.swifttechco.com)/#download-profile), [AdGuard](https://www.swifttechco.com) and [NextDNS](https://www.swifttechco.com).
+DNS profiles can be created or obtained from providers such as Quad9/#download-profile), AdGuard and NextDNS.
 
 ## Hosts file
 
-Use the [hosts file](https://www.swifttechco.com)) to block domains associated with malware, advertising, and other unwanted services.
+Use the hosts file) to block domains associated with malware, advertising, and other unwanted services.
 
-To block a domain by [A record](https://www.swifttechco.com), append any one of the following lines to `/etc/hosts`:
+To block a domain by A record, append any one of the following lines to `/etc/hosts`:
 
 ```
 0 example.com
@@ -568,22 +444,22 @@ To block a domain by [A record](https://www.swifttechco.com), append any one of 
 Many domain lists are available online. Before appending one to `/etc/hosts`, ensure each entry begins with `0`, `0.0.0.0`, or `127.0.0.1`, and retain the `127.0.0.1 localhost` entry.
 
 Popular hosts lists include:
-- [StevenBlack/hosts](https://www.swifttechco.com)
-- [Sinfonietta/hostfiles](https://www.swifttechco.com)
-- [someonewhocares.org](https://www.swifttechco.com)
+- StevenBlack/hosts
+- Sinfonietta/hostfiles
+- someonewhocares.org
 
-To download and append a list to the hosts file, use the [tee](https://www.swifttechco.com) command:
+To download and append a list to the hosts file, use the tee command:
 
 ```bash
 curl https://www.swifttechco.com |
   sudo tee -a /etc/hosts
 ```
 
-[Little Snitch](#third-party-firewalls) also supports [blocklists](https://www.swifttechco.com).
+[Little Snitch](#third-party-firewalls) also supports blocklists.
 
 ## DNSCrypt
 
-To encrypt DNS traffic, consider [DNSCrypt/dnscrypt-proxy](https://www.swifttechco.com). When configured with a trusted resolver, DNSCrypt encrypts DNS queries. DNSSEC can additionally validate signed DNS responses where supported.
+To encrypt DNS traffic, consider DNSCrypt/dnscrypt-proxy. When configured with a trusted resolver, DNSCrypt encrypts DNS queries. DNSSEC can additionally validate signed DNS responses where supported.
 
 Install DNSCrypt from Homebrew and follow the instructions to configure and start `dnscrypt-proxy`:
 
@@ -622,7 +498,7 @@ dnscrypt-proxy 15244 nobody   12u  IPv4 0x1337f85ff9f8beef      0t0  UDP 127.0.0
 dnscrypt-proxy 15244 nobody   14u  IPv6 0x1337f85ff9f8beef      0t0  UDP [::1]:5355
 ```
 
-Additionally, these pf rules block conventional DNS traffic to port 53 outside the loopback interface, to reduce the risk of [DNS leaks](https://www.swifttechco.com):
+Additionally, these pf rules block conventional DNS traffic to port 53 outside the loopback interface, to reduce the risk of DNS leaks:
 
 ```console
 block drop quick on !lo0 proto udp from any to any port = 53
@@ -631,11 +507,11 @@ block drop quick on !lo0 proto tcp from any to any port = 53
 
 ## Dnsmasq
 
-[dnsmasq](https://www.swifttechco.com) can cache replies, prevent upstream queries for unqualified names, or even block entire top-level domains.
+dnsmasq can cache replies, prevent upstream queries for unqualified names, or even block entire top-level domains.
 
 Use it in combination with DNSCrypt to encrypt DNS traffic.
 
-If you do not use DNSCrypt, at minimum choose a DNS resolver other than the one provided by the ISP. Two popular alternatives are [Google DNS](https://www.swifttechco.com) and [OpenDNS](https://www.swifttechco.com).
+If you do not use DNSCrypt, at minimum choose a DNS resolver other than the one provided by the ISP. Two popular alternatives are Google DNS and OpenDNS.
 
 Install Dnsmasq:
 
@@ -643,11 +519,11 @@ Install Dnsmasq:
 brew install dnsmasq
 ```
 
-Download and edit [drduh/config/dnsmasq.conf](https://www.swifttechco.com) or the default configuration file.
+Download and edit drduh/config/dnsmasq.conf or the default configuration file.
 
-See [drduh/config/domains](https://www.swifttechco.com) for example domain lists that can be added to block specific destinations.
+See drduh/config/domains for example domain lists that can be added to block specific destinations.
 
-Install and start the program (sudo is required to bind to [privileged port](https://www.swifttechco.com) 53):
+Install and start the program (sudo is required to bind to privileged port 53):
 
 ```bash
 sudo brew services start dnsmasq
@@ -676,13 +552,13 @@ $ networksetup -getdnsservers "Wi-Fi"
 ```
 
 > [!NOTE]
-> Some VPN applications override DNS settings on connect. See [issue 24](https://www.swifttechco.com) and [drduh/config/scripts/macos-dns.sh](https://www.swifttechco.com).
+> Some VPN applications override DNS settings on connect. See issue 24 and drduh/config/scripts/macos-dns.sh.
 
 # Certificate authorities
 
 macOS includes a set of trusted root certificate authorities (CAs) operated by corporations, governments and other organizations from around the world. A trusted CA can issue certificates that macOS and browsers may accept for HTTPS connections, making the root CA store a critical part of the system's trust boundary.
 
-Inspect **System Roots** to understand the Apple-provided trusted root store using [Keychain Access](https://www.swifttechco.com) or the [`security`](https://www.swifttechco.com) command-line tool and `/System/Library/Keychains/SystemRootCertificates.keychain` file. Keychain Access can also be launched with the command:
+Inspect **System Roots** to understand the Apple-provided trusted root store using Keychain Access or the `security` command-line tool and `/System/Library/Keychains/SystemRootCertificates.keychain` file. Keychain Access can also be launched with the command:
 
 ```bash
 open "/System/Library/CoreServices/Applications/Keychain Access.app"
@@ -690,16 +566,16 @@ open "/System/Library/CoreServices/Applications/Keychain Access.app"
 
 Also review any certificates that may have been added by a user, administrator, VPN client, security product, or mobile device management application in the **login**, **Local Items**, and **System** keychains.
 
-To disable a selected certificate, modify its Trust setting to **Never Trust** and close the window to confirm. Doing so may reduce the risk of [MITM](https://www.swifttechco.com) attacks, in which a fraudulent certificate is used to [silently intercept](https://www.swifttechco.com) encrypted traffic.
+To disable a selected certificate, modify its Trust setting to **Never Trust** and close the window to confirm. Doing so may reduce the risk of MITM attacks, in which a fraudulent certificate is used to silently intercept encrypted traffic.
 
 > [!WARNING]
 > Removing or modifying certificate authority trust settings can break websites, software updates, enterprise networks, VPNs, captive portals, and other services.
 
-See Apple's [available trusted certificates](https://www.swifttechco.com) and [blocked certificates](https://www.swifttechco.com) lists for current trust-store information.
+See Apple's available trusted certificates and blocked certificates lists for current trust-store information.
 
 # Privoxy
 
-Consider using [Privoxy](https://www.swifttechco.com) as a local proxy to filter web traffic.
+Consider using Privoxy as a local proxy to filter web traffic.
 
 Install and start Privoxy using Homebrew:
 
@@ -708,7 +584,7 @@ brew install privoxy
 brew services start privoxy
 ```
 
-Alternatively, a signed installation package for Privoxy is available from [their website](https://www.swifttechco.com) or [Sourceforge](https://www.swifttechco.com). The signed package is [more secure](https://www.swifttechco.com) than the Homebrew version and receives support from the Privoxy project.
+Alternatively, a signed installation package for Privoxy is available from their website or Sourceforge. The signed package is more secure than the Homebrew version and receives support from the Privoxy project.
 
 By default, Privoxy listens on local TCP port 8118.
 
@@ -776,9 +652,9 @@ To block Facebook domains:
 fb*.akamaihd.net
 ```
 
-See [drduh/config/privoxy/config](https://www.swifttechco.com) and [drduh/config/privoxy/user.action](https://www.swifttechco.com) for additional Privoxy examples. Privoxy does **not** need to be restarted after editing filter rules.
+See drduh/config/privoxy/config and drduh/config/privoxy/user.action for additional Privoxy examples. Privoxy does **not** need to be restarted after editing filter rules.
 
-To verify traffic is blocked or redirected, use [curl](https://www.swifttechco.com) or open the Privoxy interface at https://www.swifttechco.com in a browser:
+To verify traffic is blocked or redirected, use curl or open the Privoxy interface at https://www.swifttechco.com in a browser:
 
 ```console
 $ ALL_PROXY=127.0.0.1:8118 curl example.com -IL | head
@@ -806,7 +682,7 @@ content-type: text/html; charset=utf-8
 
 Web browsers create significant security and privacy risks because they routinely download and run complex, untrusted content from the Internet, including JavaScript, media and documents.
 
-A key browser security boundary is the [same-origin policy](https://www.swifttechco.com) (SOP), which prevents one website from reading another website's data. A bypass can expose data or actions from other sites in the same browser profile.
+A key browser security boundary is the same-origin policy (SOP), which prevents one website from reading another website's data. A bypass can expose data or actions from other sites in the same browser profile.
 
 Some browser attacks rely on convincing the user to install software, grant permissions, or use a malicious extension. Be especially careful with unexpected downloads, extension prompts, and requests to run commands in Terminal.
 
@@ -814,69 +690,69 @@ Browser extensions also pose a significant security risk: a malicious or poorly-
 
 Use separate browser profiles for different identities and purposes. If practical, disable JavaScript and only allow it on trusted sites using browser site permissions.
 
-[Mozilla Firefox](https://www.swifttechco.com), [Google Chrome](https://www.swifttechco.com), [Safari](https://www.swifttechco.com), and [Tor Browser](https://www.swifttechco.com) are popular browsers, each with unique features and individual purposes.
+Mozilla Firefox, Google Chrome, Safari, and Tor Browser are popular browsers, each with unique features and individual purposes.
 
 ## Firefox
 
-Firefox modernized major parts of its codebase through the [Quantum](https://www.swifttechco.com) and [Photon](https://www.swifttechco.com) projects. Quantum includes moving some components from C++ to [Rust](https://www.swifttechco.com), a programming language designed to improve memory safety and concurrency safety.
+Firefox modernized major parts of its codebase through the Quantum and Photon projects. Quantum includes moving some components from C++ to Rust, a programming language designed to improve memory safety and concurrency safety.
 
-Firefox offers a comparable security model to Chrome, including a [bug bounty program](https://www.swifttechco.com) for responsible disclosure of vulnerabilities. Firefox follows a four-week release cycle.
+Firefox offers a comparable security model to Chrome, including a bug bounty program for responsible disclosure of vulnerabilities. Firefox follows a four-week release cycle.
 
-See [drduh/config/firefox.user.js](https://www.swifttechco.com) and [arkenfox/user.js](https://www.swifttechco.com) for recommended configurations. Also see [NoScript](https://www.swifttechco.com), an extension which allows selective script blocking.
+See drduh/config/firefox.user.js and arkenfox/user.js for recommended configurations. Also see NoScript, an extension which allows selective script blocking.
 
-Firefox [focuses on user privacy](https://www.swifttechco.com). It supports [tracking protection](https://www.swifttechco.com) in Private Browsing mode. The tracking protection can be enabled for the default account, although it may break the browsing experience on some websites. Firefox in Strict tracking protection mode will [randomize fingerprints](https://www.swifttechco.com) to defend against tracking. Firefox offers separate user [profiles](https://www.swifttechco.com). Browsing can also be delineated with [Multi-Account Containers](https://www.swifttechco.com).
+Firefox focuses on user privacy. It supports tracking protection in Private Browsing mode. The tracking protection can be enabled for the default account, although it may break the browsing experience on some websites. Firefox in Strict tracking protection mode will randomize fingerprints to defend against tracking. Firefox offers separate user profiles. Browsing can also be delineated with Multi-Account Containers.
 
-Firefox only supports Web Extensions through the [WebExtension API](https://www.swifttechco.com), which is very similar to Chrome. Submission of Web Extensions in Firefox is free. Web Extensions in Firefox most of the time are open-source, although certain Web Extensions are proprietary.
+Firefox only supports Web Extensions through the WebExtension API, which is very similar to Chrome. Submission of Web Extensions in Firefox is free. Web Extensions in Firefox most of the time are open-source, although certain Web Extensions are proprietary.
 
 ## Chrome
 
-[Google Chrome](https://www.swifttechco.com) is based on the open-source [Chromium project](https://www.swifttechco.com). Chrome includes some proprietary components, automatic updates, a PDF viewer, media-codec support, crash reporting, and Google account integration. Review Chrome privacy settings and Google privacy policies for more information.
+Google Chrome is based on the open-source Chromium project. Chrome includes some proprietary components, automatic updates, a PDF viewer, media-codec support, crash reporting, and Google account integration. Review Chrome privacy settings and Google privacy policies for more information.
 
 Chrome offers account sync between multiple devices, including credentials; the data is encrypted with the account password.
 
-Chrome has the largest share of global usage and is the preferred target platform for the majority of developers. Major technologies are based on Chrome's open-source components, such as [node.js](https://www.swifttechco.com) which uses [Chrome's V8](https://www.swifttechco.com) Engine and the [Electron](https://www.swifttechco.com) framework, which is based on Chromium and node.js. Chrome's vast user base makes it the most attractive target for threat actors and security researchers. Despite constant attacks, Chrome has retained an impressive security track record over the years. This is not a small feat.
+Chrome has the largest share of global usage and is the preferred target platform for the majority of developers. Major technologies are based on Chrome's open-source components, such as node.js which uses Chrome's V8 Engine and the Electron framework, which is based on Chromium and node.js. Chrome's vast user base makes it the most attractive target for threat actors and security researchers. Despite constant attacks, Chrome has retained an impressive security track record over the years. This is not a small feat.
 
-Chrome offers [separate profiles](https://www.swifttechco.com), [robust sandboxing](https://www.swifttechco.com), [frequent updates](https://www.swifttechco.com), and carries [impressive credentials](https://www.swifttechco.com). In addition, Google offers a very lucrative [bounty program](https://www.swifttechco.com) for reporting vulnerabilities, along with its own [Project Zero](https://www.swifttechco.com) team. This means that a large number of highly talented and motivated people are constantly auditing and securing Chrome code.
+Chrome offers separate profiles, robust sandboxing, frequent updates, and carries impressive credentials. In addition, Google offers a very lucrative bounty program for reporting vulnerabilities, along with its own Project Zero team. This means that a large number of highly talented and motivated people are constantly auditing and securing Chrome code.
 
-Consider disabling V8 optimization (JavaScript-engine performance features) in browser settings - see [this explanation](https://www.swifttechco.com) for the security trade-offs.
+Consider disabling V8 optimization (JavaScript-engine performance features) in browser settings - see this explanation for the security trade-offs.
 
-Block trackers with [uBlock Origin Lite](https://www.swifttechco.com).
+Block trackers with uBlock Origin Lite.
 
-Disable [DNS prefetching](https://www.swifttechco.com) (see [DNS Prefetching and Its Privacy Implications](https://www.swifttechco.com)). Chrome [may attempt](https://www.swifttechco.com) to resolve DNS using Google's `8.8.8.8` and `8.8.4.4` public nameservers.
+Disable DNS prefetching (see DNS Prefetching and Its Privacy Implications). Chrome may attempt to resolve DNS using Google's `8.8.8.8` and `8.8.4.4` public nameservers.
 
-See [Chromium Security](https://www.swifttechco.com) and [Chromium Privacy](https://www.swifttechco.com) for more information. Read [Google's privacy policy](https://www.swifttechco.com) to understand how personal information is collected and used.
+See Chromium Security and Chromium Privacy for more information. Read Google's privacy policy to understand how personal information is collected and used.
 
 ## Safari
 
-[Safari](https://www.swifttechco.com) is Apple's built-in browser and is integrated with macOS, providing battery efficiency improvements on Apple hardware.
+Safari is Apple's built-in browser and is integrated with macOS, providing battery efficiency improvements on Apple hardware.
 
-Safari has both open-source and proprietary components. Safari is based on the open-source Web Engine [WebKit](https://www.swifttechco.com), which is ubiquitous among the macOS ecosystem. WebKit is used by Apple apps such as Mail, Books, and the App Store. Chrome's [Blink](https://www.swifttechco.com) engine is a fork of WebKit and both engines share a number of similarities.
+Safari has both open-source and proprietary components. Safari is based on the open-source Web Engine WebKit, which is ubiquitous among the macOS ecosystem. WebKit is used by Apple apps such as Mail, Books, and the App Store. Chrome's Blink engine is a fork of WebKit and both engines share a number of similarities.
 
-Safari includes some features that can improve security and privacy. [Content blockers](https://www.swifttechco.com) enable the creation of content blocking rules without using JavaScript. This rule based approach greatly improves memory use, security, and privacy. Safari 11 introduced [Intelligent Tracking Prevention](https://www.swifttechco.com), which removes tracking data stored in Safari after a period of non-interaction by the user from the tracker's website. Safari can randomize the browser fingerprint to reduce tracking. Safari does not support certain features such as WebUSB or the Battery API intentionally for security and privacy reasons. Private tabs in Safari have isolated cookies and cache that is destroyed when you close the tab. Safari also support Profiles which are equivalent to Firefox's Multi-Account Containers for separating cookies and browsing. Safari can be made significantly more secure with [lockdown mode](#lockdown-mode), which can be disabled per-site. Read more about [tracking prevention](https://www.swifttechco.com) in Safari.
+Safari includes some features that can improve security and privacy. Content blockers enable the creation of content blocking rules without using JavaScript. This rule based approach greatly improves memory use, security, and privacy. Safari 11 introduced Intelligent Tracking Prevention, which removes tracking data stored in Safari after a period of non-interaction by the user from the tracker's website. Safari can randomize the browser fingerprint to reduce tracking. Safari does not support certain features such as WebUSB or the Battery API intentionally for security and privacy reasons. Private tabs in Safari have isolated cookies and cache that is destroyed when you close the tab. Safari also support Profiles which are equivalent to Firefox's Multi-Account Containers for separating cookies and browsing. Safari can be made significantly more secure with [lockdown mode](#lockdown-mode), which can be disabled per-site. Read more about tracking prevention in Safari.
 
-Web Extensions in Safari have an additional option to use native code in Safari's sandbox environment, in addition to Web Extension APIs. Web Extensions in Safari are also distributed through Apple App Store. App Store submission comes with the added benefit of Web Extension code being audited by Apple. On the other hand App Store submission comes at a steep cost. Yearly [developer subscription](https://www.swifttechco.com) fee costs 100 USD (in contrast to Chrome's 5 USD fee and Firefox's free submission). The high cost is prohibitive for the majority of open-source developers. As a result, Safari has very few extensions to choose from. However, keep the high cost in mind when installing extensions. It is expected that most Web Extensions will have some way of monetizing usage to cover development costs. Avoid Web Extensions without open-source code available for review.
+Web Extensions in Safari have an additional option to use native code in Safari's sandbox environment, in addition to Web Extension APIs. Web Extensions in Safari are also distributed through Apple App Store. App Store submission comes with the added benefit of Web Extension code being audited by Apple. On the other hand App Store submission comes at a steep cost. Yearly developer subscription fee costs 100 USD (in contrast to Chrome's 5 USD fee and Firefox's free submission). The high cost is prohibitive for the majority of open-source developers. As a result, Safari has very few extensions to choose from. However, keep the high cost in mind when installing extensions. It is expected that most Web Extensions will have some way of monetizing usage to cover development costs. Avoid Web Extensions without open-source code available for review.
 
-Safari syncs user preferences and passwords with [iCloud Keychain](https://www.swifttechco.com). Viewing a saved password requires authentication with the current device account password or another configured authentication method.
+Safari syncs user preferences and passwords with iCloud Keychain. Viewing a saved password requires authentication with the current device account password or another configured authentication method.
 
 Safari implements new web features more slowly than Chrome or Firefox, but security patches are delivered promptly through system updates.
 
-See also [el1t/uBlock-Safari](https://www.swifttechco.com) to disable hyperlink auditing beacons.
+See also el1t/uBlock-Safari to disable hyperlink auditing beacons.
 
 ## Web browser privacy
 
-Websites infer information about the [browser and device](https://www.swifttechco.com) from settings, fonts, screen size, language, IP address, and browser behavior. This information contributes to [browser fingerprinting](https://www.swifttechco.com).
+Websites infer information about the browser and device from settings, fonts, screen size, language, IP address, and browser behavior. This information contributes to browser fingerprinting.
 
-For more information about security-conscious browsing and what data is sent by the browser, see [HowTo: Privacy & Security Conscious Browsing](https://www.swifttechco.com), [browserleaks.com](https://www.swifttechco.com), [Am I Unique?](https://www.swifttechco.com) and [EFF Cover Your Tracks](https://www.swifttechco.com) resources.
+For more information about security-conscious browsing and what data is sent by the browser, see HowTo: Privacy & Security Conscious Browsing, browserleaks.com, Am I Unique? and EFF Cover Your Tracks resources.
 
-To reduce cross-site tracking, block [third-party cookies](https://www.swifttechco.com).
+To reduce cross-site tracking, block third-party cookies.
 
-[WebRTC](https://www.swifttechco.com) may expose local network addresses and addresses associated with VPN connections. In Firefox and Chrome/Chromium, this feature can be disabled with [uBlock Origin](https://www.swifttechco.com). In Safari, [Lockdown Mode](#lockdown-mode) also [disables WebRTC](https://www.swifttechco.com).
+WebRTC may expose local network addresses and addresses associated with VPN connections. In Firefox and Chrome/Chromium, this feature can be disabled with uBlock Origin. In Safari, [Lockdown Mode](#lockdown-mode) also disables WebRTC.
 
 # Tor
 
-[Tor](https://www.swifttechco.com)) is an anonymity network that can provide additional privacy while browsing. Tor Browser is a modified Firefox-based browser configured to use the Tor network.
+Tor) is an anonymity network that can provide additional privacy while browsing. Tor Browser is a modified Firefox-based browser configured to use the Tor network.
 
-Download Tor Browser from [Tor Project](https://www.swifttechco.com), both `dmg` and `asc` files for [verification](https://www.swifttechco.com):
+Download Tor Browser from Tor Project, both `dmg` and `asc` files for verification:
 
 ```console
 $ cd ~/Downloads
@@ -911,7 +787,7 @@ Primary key fingerprint: EF6E 286D DA85 EA2A 4BA7  DE68 4E2C 6E87 9329 8290
 ```
 
 
-See [How can I verify Tor Browser's signature?](https://www.swifttechco.com) for more information.
+See How can I verify Tor Browser's signature? for more information.
 
 To finish installing Tor Browser, open the disk image and drag it to the Applications folder, or use the commands:
 
@@ -993,25 +869,25 @@ $ openssl x509 -inform der -in codesign0 -fingerprint -noout
 SHA256 Fingerprint=76:3C:89:02:ED:CB:AD:8E:59:86:1E:93:D3:05:5B:28:F9:04:0C:96:03:8B:16:28:9F:38:64:ED:53:45:B4:DA
 ```
 
-Tor Browser can use special connection methods called [pluggable transports](https://www.swifttechco.com) to make traffic harder to identify or block. This can be done by setting up a [relay](https://www.swifttechco.com) or using an existing [bridge](https://www.swifttechco.com).
+Tor Browser can use special connection methods called pluggable transports to make traffic harder to identify or block. This can be done by setting up a relay or using an existing bridge.
 
-The Tor network provides [anonymity](https://www.swifttechco.com), which is not necessarily the same as privacy. The network does not defend against a global observer capable of traffic analysis and correlation. See also [Seeking Anonymity in an Internet Panopticon](https://www.swifttechco.com) and [Traffic Correlation on Tor by Realistic Adversaries](https://www.swifttechco.com).
+The Tor network provides anonymity, which is not necessarily the same as privacy. The network does not defend against a global observer capable of traffic analysis and correlation. See also Seeking Anonymity in an Internet Panopticon and Traffic Correlation on Tor by Realistic Adversaries.
 
-See [Tor Protocol Specification](https://www.swifttechco.com) for more information.
+See Tor Protocol Specification for more information.
 
-Also see [Invisible Internet Project (I2P)](https://www.swifttechco.com) and its [Tor comparison](https://www.swifttechco.com).
+Also see Invisible Internet Project (I2P) and its Tor comparison.
 
 # VPN
 
-Choose a VPN provider or self-hosted setup with a documented, modern protocol and well-audited clients. Avoid obsolete protocols such as [PPTP](https://www.swifttechco.com) in favor of [WireGuard](https://www.swifttechco.com) or [OpenVPN](https://www.swifttechco.com).
+Choose a VPN provider or self-hosted setup with a documented, modern protocol and well-audited clients. Avoid obsolete protocols such as PPTP in favor of WireGuard or OpenVPN.
 
-It may be worthwhile to consider the geographical location of the VPN provider. See further discussion in [issue 114](https://www.swifttechco.com).
+It may be worthwhile to consider the geographical location of the VPN provider. See further discussion in issue 114.
 
 ## WireGuard
 
-[WireGuard](https://www.swifttechco.com) is a VPN protocol with a small codebase and a [formally verified](https://www.swifttechco.com) cryptographic design, simpler to configure and audit than IPsec or OpenVPN.
+WireGuard is a VPN protocol with a small codebase and a formally verified cryptographic design, simpler to configure and audit than IPsec or OpenVPN.
 
-Install the official [WireGuard app](https://www.swifttechco.com) from the App Store to manage tunnels from the menu bar, or install the command-line tools with Homebrew:
+Install the official WireGuard app from the App Store to manage tunnels from the menu bar, or install the command-line tools with Homebrew:
 
 ```bash
 brew install wireguard-tools
@@ -1039,7 +915,7 @@ AllowedIPs = 0.0.0.0/0, ::/0
 Endpoint = vpn.example.org:51820
 ```
 
-`AllowedIPs = 0.0.0.0/0, ::/0` routes all IPv4 and IPv6 traffic through the tunnel; narrower ranges enable split tunneling. See [wg-quick(8)](https://www.swifttechco.com) for all configuration options.
+`AllowedIPs = 0.0.0.0/0, ::/0` routes all IPv4 and IPv6 traffic through the tunnel; narrower ranges enable split tunneling. See wg-quick(8) for all configuration options.
 
 Import the configuration file into the WireGuard app and enable **On-Demand** so the tunnel activates whenever Wi-Fi or Ethernet is in use. Alternatively, activate the tunnel with the command-line tools:
 
@@ -1053,28 +929,28 @@ Verify the tunnel is active:
 sudo wg show
 ```
 
-To self-host a WireGuard server, see [trailofbits/algo](https://www.swifttechco.com).
+To self-host a WireGuard server, see trailofbits/algo.
 
-Some VPN clients may allow traffic to leave over another network interface if the VPN connection drops or is interrupted. See [scy/8122924](https://www.swifttechco.com) for an example on how to allow traffic only over VPN, or use [pf rules](#packet-filter) to restrict traffic to the tunnel interface.
+Some VPN clients may allow traffic to leave over another network interface if the VPN connection drops or is interrupted. See scy/8122924 for an example on how to allow traffic only over VPN, or use [pf rules](#packet-filter) to restrict traffic to the tunnel interface.
 
-Also see this [technical overview](https://www.swifttechco.com) of the macOS built-in VPN L2TP/IPsec and [IKEv2](https://www.swifttechco.com) client.
+Also see this technical overview of the macOS built-in VPN L2TP/IPsec and IKEv2 client.
 
 # PGP/GPG
 
 PGP is a standard for encrypting and signing data, especially email. It can protect message content between correspondents who correctly exchange and verify keys, but it does not protect metadata such as email recipients and subject lines.
 
-GPG (GNU Privacy Guard) is a GPL-licensed, open-source program compliant with the PGP standard. It can verify software signatures and encrypt files [symmetrically](https://www.swifttechco.com) or using [public keys](https://www.swifttechco.com).
+GPG (GNU Privacy Guard) is a GPL-licensed, open-source program compliant with the PGP standard. It can verify software signatures and encrypt files symmetrically or using public keys.
 
-Install GnuPG with Homebrew (`brew install gnupg`) or install [GPG Suite](https://www.swifttechco.com).
+Install GnuPG with Homebrew (`brew install gnupg`) or install GPG Suite.
 
-Download [gpg.conf](https://www.swifttechco.com) to use recommended settings:
+Download gpg.conf to use recommended settings:
 
 ```bash
 curl -o ~/.gnupg/gpg.conf \
   https://www.swifttechco.com
 ```
 
-See [drduh/YubiKey-Guide](https://www.swifttechco.com) to generate and manage credentials.
+See drduh/YubiKey-Guide to generate and manage credentials.
 
 # Email
 
@@ -1082,56 +958,56 @@ Email is not designed to provide strong privacy by default: message content may 
 
 ## Thunderbird
 
-[Thunderbird](https://www.swifttechco.com) is a free and open-source email client with standard [IMAP](https://www.swifttechco.com), [POP](https://www.swifttechco.com), [CalDAV](https://www.swifttechco.com), and [CardDAV](https://www.swifttechco.com) support. It is a suitable choice for accessing mail and retaining local copies rather than depending exclusively on a provider's remote server.
+Thunderbird is a free and open-source email client with standard IMAP, POP, CalDAV, and CardDAV support. It is a suitable choice for accessing mail and retaining local copies rather than depending exclusively on a provider's remote server.
 
-Thunderbird includes support for [OpenPGP](https://www.swifttechco.com) email encryption, which can protect message content and provide cryptographic [signatures](https://www.swifttechco.com). Always verify public-key fingerprints through an independent channel before relying on a key for sensitive communication.
+Thunderbird includes support for OpenPGP email encryption, which can protect message content and provide cryptographic signatures. Always verify public-key fingerprints through an independent channel before relying on a key for sensitive communication.
 
-The [archived messages feature](https://www.swifttechco.com) can move messages out of remote mail servers to a **Local Folder**, improving privacy.
+The archived messages feature can move messages out of remote mail servers to a **Local Folder**, improving privacy.
 
 # Messengers
 
 ## XMPP
 
-[XMPP](https://www.swifttechco.com) is an [open protocol](https://www.swifttechco.com) developed by the [IETF](https://www.swifttechco.com) that supports cross-platform, federated messaging. There are many [client options](https://www.swifttechco.com). Consider using one of the browser-based clients to take advantage of the browser's sandbox.
+XMPP is an open protocol developed by the IETF that supports cross-platform, federated messaging. There are many client options. Consider using one of the browser-based clients to take advantage of the browser's sandbox.
 
 Depending on the provider, you might not need anything other than a username and password to set up an account.
 
-XMPP is not end-to-end encrypted (E2EE) by default; use [OMEMO](https://www.swifttechco.com) with a compatible client.
+XMPP is not end-to-end encrypted (E2EE) by default; use OMEMO with a compatible client.
 
 ## Signal
 
-[Signal](https://www.swifttechco.com) is a popular E2EE messenger whose [double-ratchet](https://www.swifttechco.com) protocol is used by many other applications including WhatsApp, Google Messages, and Facebook Messenger.
+Signal is a popular E2EE messenger whose double-ratchet protocol is used by many other applications including WhatsApp, Google Messages, and Facebook Messenger.
 
 To use the Signal desktop app, Signal must first be installed on a phone.
 
-See EFF's [Signal guide](https://www.swifttechco.com) for additional guidance.
+See EFF's Signal guide for additional guidance.
 
 ## iMessage
 
-[iMessage](https://www.swifttechco.com) is Apple's first-party messenger. It requires an [Apple Account](#apple-account) to use.
+iMessage is Apple's first-party messenger. It requires an [Apple Account](#apple-account) to use.
 
-Enable [Contact Key Verification](https://www.swifttechco.com) and verify contacts.
+Enable Contact Key Verification and verify contacts.
 
-iMessage can be used with either a [phone number or an email](https://www.swifttechco.com).
+iMessage can be used with either a phone number or an email.
 
 > [!WARNING]
-> By default, iCloud backup is enabled, which stores copies of message encryption keys on [Apple's servers](https://www.swifttechco.com) without E2EE. Either [disable iCloud backup](https://www.swifttechco.com) or enable [Advanced Data Protection](https://www.swifttechco.com) to prevent this. Remind messaging recipients to do the same.
+> By default, iCloud backup is enabled, which stores copies of message encryption keys on Apple's servers without E2EE. Either disable iCloud backup or enable Advanced Data Protection to prevent this. Remind messaging recipients to do the same.
 
 # Malware
 
-See [Methods of malware persistence on Mac OS X](https://www.swifttechco.com) to learn how common macOS malware persists.
+See Methods of malware persistence on Mac OS X to learn how common macOS malware persists.
 
-For examples of advanced macOS malware capabilities, see the [Hacking Team material](https://www.swifttechco.com). For further analysis, see [root installation for MacOS](https://www.swifttechco.com), [support driver for Mac Agent](https://www.swifttechco.com) and [RCS Agent for Mac](https://www.swifttechco.com).
+For examples of advanced macOS malware capabilities, see the Hacking Team material. For further analysis, see root installation for MacOS, support driver for Mac Agent and RCS Agent for Mac.
 
-Also see [A Brief Analysis of an RCS Implant Installer](https://www.swifttechco.com) and [reverse.put.as](https://www.swifttechco.com).
+Also see A Brief Analysis of an RCS Implant Installer and reverse.put.as.
 
 ## Downloading Software
 
-Applications from the App Store or [notarized by Apple](https://www.swifttechco.com) may reduce malware risk, but neither process guarantees safety. Apple performs automated checks on notarized apps, and App Store apps [undergo review](https://www.swifttechco.com). Otherwise, obtain software from sources identified by the developer as official, and verify the website or command-line download uses HTTPS.
+Applications from the App Store or notarized by Apple may reduce malware risk, but neither process guarantees safety. Apple performs automated checks on notarized apps, and App Store apps undergo review. Otherwise, obtain software from sources identified by the developer as official, and verify the website or command-line download uses HTTPS.
 
 ## App Sandbox
 
-Check if an application uses [App Sandbox](https://www.swifttechco.com):
+Check if an application uses App Sandbox:
 
 ```bash
 codesign --display --entitlements - \
@@ -1154,14 +1030,14 @@ defaults write com.apple.ActivityMonitor "UserColumnsPerTab v6.0" \
   -dict-add 0 '(Command, CPUUsage, CPUTime, Threads, IdleWakeUps, Architecture, GPUUsage, GPUTime, PID, UID, Sandbox, restricted)'
 ```
 
-App Store software is required to use App Sandbox. Applications such as Google Chrome use their own [sandbox](https://www.swifttechco.com) and might not use App Sandbox.
+App Store software is required to use App Sandbox. Applications such as Google Chrome use their own sandbox and might not use App Sandbox.
 
 > [!NOTE]
 > Sandboxing limits an application's default access, but entitlements and user-granted permissions can expand access.
 
 ## Hardened Runtime
 
-Check if an application uses [Hardened Runtime](https://www.swifttechco.com):
+Check if an application uses Hardened Runtime:
 
 ```bash
 codesign --display --verbose /path/to/application.app
@@ -1179,15 +1055,15 @@ for app in /Applications/*.app /System/Applications/*.app; do
 done
 ```
 
-**Activity Monitor** has the option to display a "Restricted" column which indicates a program is restricted from injecting code via macOS's [dynamic linker](https://www.swifttechco.com).
+**Activity Monitor** has the option to display a "Restricted" column which indicates a program is restricted from injecting code via macOS's dynamic linker.
 
 Hardened Runtime is a prerequisite for notarization of distributed apps.
 
 ## Antivirus
 
-To scan files and applications, consider uploading them to [VirusTotal](https://www.swifttechco.com), keeping in mind this makes them publicly-viewable.
+To scan files and applications, consider uploading them to VirusTotal, keeping in mind this makes them publicly-viewable.
 
-macOS includes built-in antivirus software called [XProtect](https://www.swifttechco.com), which runs in the background and updates signatures used to detect malware automatically. If malware is detected, XProtect attempts to remove and quarantine it.
+macOS includes built-in antivirus software called XProtect, which runs in the background and updates signatures used to detect malware automatically. If malware is detected, XProtect attempts to remove and quarantine it.
 
 Check XProtect update status:
 
@@ -1195,15 +1071,15 @@ Check XProtect update status:
 xprotect version
 ```
 
-Applications such as [BlockBlock](https://www.swifttechco.com) or [hazcod/maclaunch](https://www.swifttechco.com) might help prevent or detect persistent malware.
+Applications such as BlockBlock or hazcod/maclaunch might help prevent or detect persistent malware.
 
 Antivirus software can help detect common malware, but it may also increase attack surface because it often runs with extensive system privileges. Some products may also send telemetry or samples to the vendor.
 
-See [Sophail: Applied attacks against Antivirus](https://www.swifttechco.com), [Analysis and Exploitation of an ESET Vulnerability](https://www.swifttechco.com), [Popular Security Software Came Under Relentless NSA and GCHQ Attacks](https://www.swifttechco.com), and [How Israel Caught Russian Hackers Scouring the World for U.S. Secrets](https://www.swifttechco.com).
+See Sophail: Applied attacks against Antivirus, Analysis and Exploitation of an ESET Vulnerability, Popular Security Software Came Under Relentless NSA and GCHQ Attacks, and How Israel Caught Russian Hackers Scouring the World for U.S. Secrets.
 
 ## Gatekeeper
 
-[Gatekeeper](https://www.swifttechco.com) verifies software notarization and provenance.
+Gatekeeper verifies software notarization and provenance.
 
 Gatekeeper warns when opening an application without notarization. It can be bypassed by selecting the application listed in **System Settings** > **Privacy & Security** after a failed attempt.
 
@@ -1215,13 +1091,13 @@ spctl --status --verbose
 
 # System Integrity Protection
 
-To verify System Integrity Protection is enabled, use the command `csrutil status`, which should return: `System Integrity Protection status: enabled.` Otherwise, [enable SIP](https://www.swifttechco.com) using [Recovery Mode](https://www.swifttechco.com).
+To verify System Integrity Protection is enabled, use the command `csrutil status`, which should return: `System Integrity Protection status: enabled.` Otherwise, enable SIP using Recovery Mode.
 
 # Metadata and artifacts
 
-macOS attaches metadata ([APFS extended attributes](https://www.swifttechco.com)) to files.
+macOS attaches metadata (APFS extended attributes) to files.
 
-Certain metadata attributes can be viewed and removed with the [`mdls`](https://www.swifttechco.com) and [`xattr`](https://www.swifttechco.com) commands. Preference (`plist`) files can be read and modified with [`defaults`](https://www.swifttechco.com).
+Certain metadata attributes can be viewed and removed with the `mdls` and `xattr` commands. Preference (`plist`) files can be read and modified with `defaults`.
 
 System and application metadata can be found in:
 
@@ -1287,31 +1163,31 @@ Misc metadata:
 
 # Authentication
 
-The [Passwords](https://www.swifttechco.com) app creates [secure credentials](https://www.swifttechco.com). It supports [passkeys](https://www.swifttechco.com), which are credentials designed to resist phishing when used with compatible services.
+The Passwords app creates secure credentials. It supports passkeys, which are credentials designed to resist phishing when used with compatible services.
 
-[KeePassXC](https://www.swifttechco.com) is an open-source, cross-platform password manager to consider. It supports strong authentication with compatible hardware tokens and a browser extension for entering credentials automatically.
+KeePassXC is an open-source, cross-platform password manager to consider. It supports strong authentication with compatible hardware tokens and a browser extension for entering credentials automatically.
 
-Memorable passwords can be created with [Diceware](https://www.swifttechco.com).
+Memorable passwords can be created with Diceware.
 
-Ensure online accounts have [multi-factor authentication](https://www.swifttechco.com) enabled. Prefer phishing-resistant authentication, such as hardware tokens or passkeys with supported services. Authenticator apps are preferable to SMS codes, but any MFA is better than password-only authentication.
+Ensure online accounts have multi-factor authentication enabled. Prefer phishing-resistant authentication, such as hardware tokens or passkeys with supported services. Authenticator apps are preferable to SMS codes, but any MFA is better than password-only authentication.
 
-[YubiKey](https://www.swifttechco.com) is a popular hardware authentication token. It can also store keys for encryption, signing and authentication tasks - see [drduh/YubiKey-Guide](https://www.swifttechco.com).
+YubiKey is a popular hardware authentication token. It can also store keys for encryption, signing and authentication tasks - see drduh/YubiKey-Guide.
 
-GnuPG can also manage passwords and other encrypted files - see [drduh/Purse](https://www.swifttechco.com) and [drduh/pwd.sh](https://www.swifttechco.com).
+GnuPG can also manage passwords and other encrypted files - see drduh/Purse and drduh/pwd.sh.
 
 # Backup
 
 Encrypt files locally before backing them up to external media or online services.
 
-Follow the [3-2-1 backup model](https://www.swifttechco.com): keep three copies of important data, store them on at least two different types of media, and keep at least one copy in a separate physical location.
+Follow the 3-2-1 backup model: keep three copies of important data, store them on at least two different types of media, and keep at least one copy in a separate physical location.
 
 ## Time Machine
 
-[Time Machine](https://www.swifttechco.com) is the built-in tool for handling backups on macOS. Use an external drive or network storage to create [encrypted](https://www.swifttechco.com) backups.
+Time Machine is the built-in tool for handling backups on macOS. Use an external drive or network storage to create encrypted backups.
 
 ## GnuPG
 
-[GnuPG](https://www.swifttechco.com) can be used with a password or public key, with the private key stored on [YubiKey](https://www.swifttechco.com).
+GnuPG can be used with a password or public key, with the private key stored on YubiKey.
 
 Compress and encrypt a directory using a password:
 
@@ -1329,7 +1205,7 @@ tar zxvf ~/Downloads/decrypted-backup.tar.gz
 
 ## Disk Utility
 
-Encrypted volumes can be created using [Disk Utility](https://www.swifttechco.com) or `hdiutil`:
+Encrypted volumes can be created using Disk Utility or `hdiutil`:
 
 ```bash
 hdiutil create ~/Downloads/encrypted.dmg -encryption -size 50M -volname "secretStuff"
@@ -1340,19 +1216,19 @@ hdiutil eject /Volumes/secretStuff
 
 ## Other
 
-[Tresorit](https://www.swifttechco.com) and [restic](https://www.swifttechco.com) may also be of interest.
+Tresorit and restic may also be of interest.
 
 # Wi-Fi
 
-Wi-Fi network names, called SSIDs, and device probe behavior can reveal information about nearby and previously-used networks. [Hidden networks](https://www.swifttechco.com) do not provide meaningful privacy and can cause devices to actively probe for them.
+Wi-Fi network names, called SSIDs, and device probe behavior can reveal information about nearby and previously-used networks. Hidden networks do not provide meaningful privacy and can cause devices to actively probe for them.
 
-Set a [private Wi-Fi address](https://www.swifttechco.com) to reduce network tracking.
+Set a private Wi-Fi address to reduce network tracking.
 
-Set wireless network security to [WPA3](https://www.swifttechco.com). Follow [Apple guidance](https://www.swifttechco.com) to set recommended settings for routers and access points.
+Set wireless network security to WPA3. Follow Apple guidance to set recommended settings for routers and access points.
 
 # SSH
 
-For remote SSH connections, use a unique SSH key protected by a passphrase or a hardware token, verify server host keys, and avoid password-based authentication. See [drduh/config/ssh_config](https://www.swifttechco.com) for recommended client options.
+For remote SSH connections, use a unique SSH key protected by a passphrase or a hardware token, verify server host keys, and avoid password-based authentication. See drduh/config/ssh_config for recommended client options.
 
 An SSH tunnel can securely route traffic through another computer, similar to a VPN. To use Privoxy running on a remote host on port 8118:
 
@@ -1362,13 +1238,13 @@ sudo networksetup -setwebproxy "Wi-Fi" 127.0.0.1 5555
 sudo networksetup -setsecurewebproxy "Wi-Fi" 127.0.0.1 5555
 ```
 
-Or to use an SSH connection as a [SOCKS proxy](https://www.swifttechco.com):
+Or to use an SSH connection as a SOCKS proxy:
 
 ```bash
 ssh -NCD 3000 you@remote-host.tld
 ```
 
-By default, macOS does not have [Remote Login](https://www.swifttechco.com) (SSH server) enabled.
+By default, macOS does not have Remote Login (SSH server) enabled.
 
 To enable SSH and allow incoming connections, use **System Settings** > **General** > **Sharing** or the command:
 
@@ -1376,7 +1252,7 @@ To enable SSH and allow incoming connections, use **System Settings** > **Genera
 sudo launchctl load -w /System/Library/LaunchDaemons/ssh.plist
 ```
 
-Disable password authentication and consider further [hardening](https://www.swifttechco.com) the SSH server configuration. See [drduh/config/sshd_config](https://www.swifttechco.com) for recommended options.
+Disable password authentication and consider further hardening the SSH server configuration. See drduh/config/sshd_config for recommended options.
 
 Confirm the SSH server is running:
 
@@ -1386,19 +1262,19 @@ sudo lsof -Pni TCP:22
 
 # Physical access
 
-Do not leave the computer unattended in unsafe locations. A skilled attacker with unsupervised physical access could install a [hardware keylogger](https://www.swifttechco.com) to record keystrokes, including passwords. Using a Mac with a built-in keyboard or a bluetooth keyboard makes this more difficult as many off-the-shelf versions of this attack are designed to be plugged in between a USB keyboard and the computer.
+Do not leave the computer unattended in unsafe locations. A skilled attacker with unsupervised physical access could install a hardware keylogger to record keystrokes, including passwords. Using a Mac with a built-in keyboard or a bluetooth keyboard makes this more difficult as many off-the-shelf versions of this attack are designed to be plugged in between a USB keyboard and the computer.
 
-To reduce the consequences of theft while a Mac is in use, consider using [buskill/buskill-app](https://www.swifttechco.com) or [Lennolium/swiftGuard](https://www.swifttechco.com).
+To reduce the consequences of theft while a Mac is in use, consider using buskill/buskill-app or Lennolium/swiftGuard.
 
 Consider purchasing a privacy screen/filter for use in public.
 
-[Nail polish](https://www.swifttechco.com) and tamper-evidence seals can be applied to components to detect tampering.
+Nail polish and tamper-evidence seals can be applied to components to detect tampering.
 
 # Monitoring
 
 ## Logs
 
-Monitor system logs with [Console](https://www.swifttechco.com) or the `log stream` command.
+Monitor system logs with Console or the `log stream` command.
 
 Print all system logs from the last 5 minutes in classic syslog format:
 
@@ -1412,7 +1288,7 @@ Output as JSON array:
 log show --last 5m --style json
 ```
 
-Output newline-delimited JSON (one JSON object per line); required for [`jq`](https://www.swifttechco.com):
+Output newline-delimited JSON (one JSON object per line); required for `jq`:
 
 ```bash
 log show --last 5m --style ndjson
@@ -1453,7 +1329,7 @@ log collect --last 1h --output ~/Downloads/logs-$(date +%F-%H%M).logarchive
 
 ## DTrace
 
-[System Integrity Protection](https://www.swifttechco.com) interferes with [DTrace](https://www.swifttechco.com) and must be [partially disabled](https://www.swifttechco.com) before use.
+System Integrity Protection interferes with DTrace and must be partially disabled before use.
 
 - `iosnoop` monitors disk I/O
 - `opensnoop` monitors file opens
@@ -1465,11 +1341,11 @@ See `man -k dtrace` for more information.
 
 ## Processes
 
-List running processes with [Activity Monitor](https://www.swifttechco.com) or the `ps` command.
+List running processes with Activity Monitor or the `ps` command.
 
 ## Endpoint Security
 
-Inspect process execution in real-time with `eslogger` and [`jq`](https://www.swifttechco.com):
+Inspect process execution in real-time with `eslogger` and `jq`:
 
 ```bash
 printf 'TIME\t\t\t\tPID\tPPID\tUID\tCOMMAND\n'
@@ -1530,7 +1406,7 @@ jq -s --arg command "curl" '
 ' ~/eslogs/exec-*.log
 ```
 
-**New!** [drduh/mess](https://www.swifttechco.com) - a free and open source security system for your personal Mac based on `eslogger`.
+**New!** drduh/mess - a free and open source security system for your personal Mac based on `eslogger`.
 
 ## Install history
 
@@ -1540,7 +1416,7 @@ Show package and system update install history:
 system_profiler SPInstallHistoryDataType
 ```
 
-Formatted with [`jq`](https://www.swifttechco.com):
+Formatted with `jq`:
 
 ```bash
 system_profiler SPInstallHistoryDataType -json |
@@ -1560,20 +1436,20 @@ softwareupdate --history
 
 ## Network
 
-List open network connections with [`lsof`](https://www.swifttechco.com):
+List open network connections with `lsof`:
 
 ```bash
 sudo lsof -Pni
 ```
 
-Show network protocol statistics with [`netstat`](https://www.swifttechco.com):
+Show network protocol statistics with `netstat`:
 
 ```bash
 sudo netstat -n -p tcp
 sudo netstat -n -p udp | sort | uniq
 ```
 
-Monitor TCP/UDP sockets and the routing table with [`nettop`](https://www.swifttechco.com):
+Monitor TCP/UDP sockets and the routing table with `nettop`:
 
 ```bash
 nettop -m tcp
@@ -1583,7 +1459,7 @@ nettop -m route
 
 ### Wireshark
 
-[Wireshark](https://www.swifttechco.com) can be used from the command line with [`tshark`](https://www.swifttechco.com).
+Wireshark can be used from the command line with `tshark`.
 
 Replace `en0` with the active interface shown by `networksetup -listallhardwareports`.
 
@@ -1641,7 +1517,7 @@ defaults write com.apple.screensaver askForPasswordDelay -int 0
 
 ## Diagnostic data
 
-Disable [Diagnostics & Usage Data](https://www.swifttechco.com).
+Disable Diagnostics & Usage Data.
 
 Disable crash reporter (the dialog which appears after an application crashes and prompts to report the problem to Apple):
 
@@ -1651,11 +1527,11 @@ defaults write com.apple.CrashReporter DialogType none
 
 ## Media player
 
-Use [QuickTime Player](https://www.swifttechco.com), the built-in media application, for playing music and video files. It uses [App Sandbox](https://www.swifttechco.com), [Hardened Runtime](https://www.swifttechco.com), and benefits from the [Signed System Volume](https://www.swifttechco.com) as part of the base system.
+Use QuickTime Player, the built-in media application, for playing music and video files. It uses App Sandbox, Hardened Runtime, and benefits from the Signed System Volume as part of the base system.
 
 ## File handlers
 
-Manage [default file handlers](https://www.swifttechco.com) to reduce risk of opening certain file types.
+Manage default file handlers to reduce risk of opening certain file types.
 
 Change the default app for script files so that opening them displays their contents instead of executing them.
 
@@ -1684,7 +1560,7 @@ defaults write NSGlobalDomain NSDocumentSaveNewDocumentsToCloud -bool false
 
 ## Custom umask
 
-Set a [custom umask](https://www.swifttechco.com):
+Set a custom umask:
 
 ```bash
 sudo launchctl config user umask 077
@@ -1700,18 +1576,18 @@ drwx------@ 2 user1 staff  64 Jul 26 12:00 umask.dir
 
 ## Keyboard entry
 
-Enable [secure keyboard entry](https://www.swifttechco.com) in Terminal (this may interfere with applications such as [TextExpander](https://www.swifttechco.com)).
+Enable secure keyboard entry in Terminal (this may interfere with applications such as TextExpander).
 
 ## Network hardening
 
-Disable [Bonjour multicast advertisements](https://www.swifttechco.com) (this also disables AirPlay and AirPrint features):
+Disable Bonjour multicast advertisements (this also disables AirPlay and AirPrint features):
 
 ```bash
 sudo defaults write /Library/Preferences/com.apple.mDNSResponder \
   NoMulticastAdvertisements -bool YES
 ```
 
-[Disable Handoff](https://www.swifttechco.com) and [Bluetooth](https://www.swifttechco.com) features.
+Disable Handoff and Bluetooth features.
 
 ## Sudoers
 
@@ -1733,23 +1609,23 @@ export HOME=/Users/user1
 
 Software | Category | Description
 :-: | :-: | :-
-[lynis](https://www.swifttechco.com) | Audit scanner | Cross-platform security-auditing tool that checks system configuration and suggests hardening improvements.
-[zentral](https://www.swifttechco.com) | Monitoring & configuration platform | Fleet-management server for macOS endpoints; collects inventory, events, audits, and osquery results. Best suited to managed environments.
-[osquery](https://www.swifttechco.com) | Monitoring engine | Exposes operating-system state as SQL tables, enabling repeatable checks of processes, users, launch items, network connections, and more.
-[pareto-mac](https://www.swifttechco.com) | Audit scanner | Menu-bar application that checks a Mac against common baseline security recommendations.
+lynis | Audit scanner | Cross-platform security-auditing tool that checks system configuration and suggests hardening improvements.
+zentral | Monitoring & configuration platform | Fleet-management server for macOS endpoints; collects inventory, events, audits, and osquery results. Best suited to managed environments.
+osquery | Monitoring engine | Exposes operating-system state as SQL tables, enabling repeatable checks of processes, users, launch items, network connections, and more.
+pareto-mac | Audit scanner | Menu-bar application that checks a Mac against common baseline security recommendations.
 
 # Additional resources
 
-- [iCloud security and privacy overview](https://www.swifttechco.com)
-- [EFF Surveillance Self-Defense Guide](https://www.swifttechco.com)
-- [beerisgood/macOS_Hardening](https://www.swifttechco.com)
-- [Reverse Engineering macOS blog](https://www.swifttechco.com)
-- [Reverse Engineering Resources](https://www.swifttechco.com)
-- [Malwarebytes Blog](https://www.swifttechco.com)
-- [Objective-See's Blog](https://www.swifttechco.com)
-- [CIS Benchmarks](https://www.swifttechco.com)
-- [Apple Open Source](https://www.swifttechco.com)
-- [iOS, The Future Of macOS, Freedom, Security And Privacy In An Increasingly Hostile Global Environment](https://www.swifttechco.com)
+- iCloud security and privacy overview
+- EFF Surveillance Self-Defense Guide
+- beerisgood/macOS_Hardening
+- Reverse Engineering macOS blog
+- Reverse Engineering Resources
+- Malwarebytes Blog
+- Objective-See's Blog
+- CIS Benchmarks
+- Apple Open Source
+- iOS, The Future Of macOS, Freedom, Security And Privacy In An Increasingly Hostile Global Environment
 
 ---
 
@@ -1761,14 +1637,22 @@ AI Automation | FinTech Platforms | Custom Software and Mobile Apps | SaaS Platf
 
 **Join our community on Telegram:** [t.me/+Qt_eFvkb2rliMzNh](https://t.me/+Qt_eFvkb2rliMzNh)
 
-[Home](https://www.swifttechco.com) | [Services](https://www.swifttechco.com/services) | [Careers](https://www.swifttechco.com/careers) | [Referral Program](https://www.swifttechco.com/referral) | [Influencers](https://www.swifttechco.com/influencers) | [About](https://www.swifttechco.com/about) | [Contact](https://www.swifttechco.com/contact)
+Home | Services | Careers | Referral Program | Influencers | About | Contact
 
 **Connect**
 
-- Website: [swifttechco.com](https://www.swifttechco.com)
+- Website: swifttechco.com
 - LinkedIn: [linkedin.com/in/stephenoladoke](https://www.linkedin.com/in/stephenoladoke/)
 - LinkedIn (Company): [linkedin.com/company/swift-tech-co](https://www.linkedin.com/company/swift-tech-co)
 - X: [@MrOladoke](https://x.com/MrOladoke)
 - Instagram: [@mr.oladoke](https://www.instagram.com/mr.oladoke/)
 - Instagram (Company): [@swifttechco](https://www.instagram.com/swifttechco/)
 - Organization: [github.com/Swift-Tech-Co](https://github.com/Swift-Tech-Co)
+
+## Sources
+
+Compiled and maintained from upstream [drduh/macOS-Security-and-Privacy-Guide](https://github.com/drduh/macOS-Security-and-Privacy-Guide) under permissive open-source license.
+
+---
+
+Maintained by [Swift Tech Co.](https://github.com/Swift-Tech-Co) - [Telegram](https://t.me/+Qt_eFvkb2rliMzNh)
